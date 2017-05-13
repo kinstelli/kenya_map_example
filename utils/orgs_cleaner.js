@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const fileInPath = '../data/Distribution_of_Donor_and_GOK_Funded_Projects_2013_to_2015.geojson';
-const fileOutPath = '../data/Distribution_of_Donor_and_GOK_Funded_Projects_2013_to_2015.trimmed.geojson';
+const fileOutPath = '../data/prunedprojdata.geojson';
 
 const unusedFields = ['ward', 'approval_date', 'start_date__planned_','constituency',
 					'start_date__actual_', 'end_date__planned_', 'end_date__actual_',
@@ -13,6 +13,8 @@ const unusedFields = ['ward', 'approval_date', 'start_date__planned_','constitue
 let parsedJSON = JSON.parse(fs.readFileSync(fileInPath, 'utf8'));
 
 let newCollection = [];
+
+let duplicateCounter = 0;
 
 parsedJSON.features.map(function removeFields(feature){
 
@@ -27,7 +29,9 @@ parsedJSON.features.map(function removeFields(feature){
 			}
 		}
  		// and if it has unique geometry, store it in a new array
-		addIfUnique(newCollection, feature);
+		//addIfUnique(newCollection, feature);
+		newCollection.push(feature);
+
 	}
 });
 
@@ -52,23 +56,26 @@ function addIfUnique(newColl, newItem)
 		if (newColl[i].geometry.coordinates[0] === newItem.geometry.coordinates[0]
 			&& newColl[i].geometry.coordinates[1] === newItem.geometry.coordinates[1])
 		{
-			console.log('matched:', newColl[i],' against ', newItem);
+			console.log('matched:');
 			//then, decide what to keep...
-
 			//if the existing record has no data, and the new one *does*, then overwrite old record
 			if (newColl[i].properties.project_title === null && newItem.properties.project_title !== null)
 			{
+				console.log('Existing item has no title, new item does.');
 				newColl[i] = newItem;
-			}
-			//if the existing record has proj name/desc data, and this one doesn't, then don't add it
-			else if (newItem.properties.project_title === null)
-			{
-				return;
-			//if they both have data, then add the record
-			}else if (newColl[i].properties.project_title !== null && newItem.properties.project_title !== null)
-			{
+				newColl[i].properties.projs_at_loc++;
 				return;
 			}
+			//if the existing record has proj name/desc data, and this one doesn't, then don't add it, but inc count?
+			else if (newColl[i].properties.project_title !== null && newItem.properties.project_title === null)
+			{
+				console.log('Existing item has title, new item does not.');
+				newColl[i].properties.projs_at_loc++;
+				return;
+			}
+			console.log('Both records have data: \nold:', newColl[i].properties.project_title, '\nnew:', newItem.properties.project_title);
+			//if they both have data, then proceed to add the record
+			newItem.projs_at_loc = 1;
 		}
 	}
 
