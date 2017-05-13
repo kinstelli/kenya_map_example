@@ -2,58 +2,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
-	<title>Quick Start - Leaflet</title>
-
+	<title>Proof of concept...</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
     <link rel="stylesheet" href="App.css" />
-    <script src="kenyadata.geojson.js" type="text/javascript"></script>
-
-<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>	
-<script
-  src="https://code.jquery.com/jquery-3.2.1.min.js"
-  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-  crossorigin="anonymous"></script>
-<script src="leaflet.ajax.min.js"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
 </head>
 <body>
 
-
 <div id="mapid" class="mapPane"></div>
-<script>
-	var mymap = L.map('mapid').setView([0.0515, 37.09], 5);
+	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>	
+	<script src="js/vendor/leaflet.ajax.min.js"></script>
+    <script src="js/map.js"></script>
 
-	/*var kenyaDataLayer = $.ajax("http://localhost:5000/kenyadata.geojson", {dataType:"jsonp"}).then(
-		function(what){ 
-			console.log('ok...');
-			what.addTo(mymap); }
-		);
-	*/
-
-	L.geoJSON(featureSet, {}).addTo(mymap);
-
-
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={authToken}' , {
-		maxZoom: 10,
-		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-		id: 'mapbox.streets',
-		authToken: 'pk.eyJ1IjoibXJra2lzZWxqYWsiLCJhIjoiY2oybW9qYThlMDE0eTJ4bWh6cDBzOHNxaiJ9.9Kdv39_U7J2_UaDhbNj_CQ'
-
-	}).addTo(mymap);
-
-
-
-</script>
-
-
+<div id="controls" class="appMenu">
+	<div>Clustering: <button>on</button> <button>off</button></div>
+	<div>Filter by...
+	<div>NG Programme:</div>
+	</div>
+</div>
 
 </body>
 </html>
