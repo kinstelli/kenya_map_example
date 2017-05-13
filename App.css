@@ -2,7 +2,7 @@
 {
 	position:absolute;
 	top:0px;
-	background-color:#225522;
+	background-color:#222222;
 	right: 0px;
 	width: 85%; 
 	height: 100%; 
@@ -24,16 +24,25 @@
 }
 
 .statusBox {
-	position:absolute;
-	bottom: 0px;
-	left: 0px;
-	height: 5%;
-	width:95%;
+	height: 1em;
+	width: 80%;
+	bottom:2%;
+	margin-top: auto;
 	margin: auto;
-	background-color: #225522;
 	padding: 10px;
 	font-family: helvetica, arial, sans-serif;
 	color: #22aaaa;;
+}
+
+.spinnyOverlay
+{
+	position: absolute;
+    top: 25%;
+    left: 10%;
+    width: 80%;
+    height: 50%;
+    background-color: #ffffff;
+    z-index: 1000;
 }
 
 .appMenu {
