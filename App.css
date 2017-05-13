@@ -10,6 +10,11 @@
 	border-left:2px black solid;
 }
 
+.filterBox
+{
+	margin-top: 1em; 
+}
+
 .projDescText, .projObjectivesText
 {
 	font-family: helvetica, arial, sans-serif;
