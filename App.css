@@ -38,10 +38,7 @@
 {
 	position: absolute;
     top: 25%;
-    left: 10%;
-    width: 80%;
-    height: 50%;
-    background-color: #ffffff;
+    left: 45%;
     z-index: 1000;
 }
 

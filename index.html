@@ -24,8 +24,10 @@
 
 	<div id="controls" class="appMenu">
 	
-	<div class="titleBlock">Here is a title</div>
-	<div>Cluster data?: <button ng-click="toggleClustering()">{{ !doClustering }}</button></div>
+	<div class="titleBlock">Projects Map</div>
+	<div>Cluster data?: 
+		<button ng-click="toggleClustering()">{{ !showClusters }}</button>
+	</div>
 	<div></div>
 	<div><b>Filter by...</b>
 	<ul class="filterList">	
@@ -35,8 +37,8 @@
 	</div>
 
 
-	<div class="spinnyOverlay" ng-show="currentlyRendering">
-		I AM RENDERING
+	<div class="spinnyOverlay"  ng-show="currentlyRendering">
+		<img src="imgs/loading.gif" />
 	</div>
 </div>
 
