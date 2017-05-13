@@ -14,20 +14,68 @@ let parsedJSON = JSON.parse(fs.readFileSync(fileInPath, 'utf8'));
 
 let newCollection = [];
 
-//proceed to remove unnecessary props from each object and store that in a new array
 parsedJSON.features.map(function removeFields(feature){
 
-	for (var prop in feature.properties )
+	if (hasGeometry(feature)) //don't bother with this record if it has no geometry
 	{
-		if (feature.properties.hasOwnProperty(prop) && (unusedFields.indexOf(prop) > -1)) 
+		//remove unnecessary props from each object
+		for (var prop in feature.properties )
 		{
-			delete feature.properties[prop];
+			if (feature.properties.hasOwnProperty(prop) && (unusedFields.indexOf(prop) > -1)) 
+			{
+				delete feature.properties[prop];
+			}
 		}
+ 		// and if it has unique geometry, store it in a new array
+		addIfUnique(newCollection, feature);
 	}
-	newCollection.push(feature);
 });
 
 //TODO: instead of eradicating data, normalize some data for filtering, but put elsewhere
+
+
+//TODO: doublecheck against duplicate coords or objects missing essential data
+function hasGeometry(newItem)
+{
+	if (newItem.geometry === null)
+	{
+		return false;
+	}
+	return true;
+}
+
+function addIfUnique(newColl, newItem)
+{
+	for (var i = 0; i < newColl.length; i++)
+	{
+		//find out if this exact long/lat already exists in the array
+		if (newColl[i].geometry.coordinates[0] === newItem.geometry.coordinates[0]
+			&& newColl[i].geometry.coordinates[1] === newItem.geometry.coordinates[1])
+		{
+			console.log('matched:', newColl[i],' against ', newItem);
+			//then, decide what to keep...
+
+			//if the existing record has no data, and the new one *does*, then overwrite old record
+			if (newColl[i].properties.project_title === null && newItem.properties.project_title !== null)
+			{
+				newColl[i] = newItem;
+			}
+			//if the existing record has proj name/desc data, and this one doesn't, then don't add it
+			else if (newItem.properties.project_title === null)
+			{
+				return;
+			//if they both have data, then add the record
+			}else if (newColl[i].properties.project_title !== null && newItem.properties.project_title !== null)
+			{
+				return;
+			}
+		}
+	}
+
+	//TODO: this is a potentially ugly side-effect, don't rely on array ref here
+	newColl.push(newItem);
+}
+
 
 //reassemble to original object
 parsedJSON.features = newCollection;

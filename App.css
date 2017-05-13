@@ -1,1 +1,67 @@
-.mapPane { width: 600px; height: 400px; }
+.mapContainer
+{
+	position:absolute;
+	top:0px;
+	background-color:#225522;
+	right: 0px;
+	width: 85%; 
+	height: 100%; 
+	margin: 0;
+	border-left:2px black solid;
+}
+
+.projDescText
+{
+	font-family: helvetica, arial, sans-serif;
+	font-size:8px;
+}
+
+.mapPane { 
+	width: 95%; 
+	height: 90%; 
+	margin: auto;
+	margin-top: 1%;
+}
+
+.statusBox {
+	position:absolute;
+	bottom: 0px;
+	left: 0px;
+	height: 5%;
+	width:95%;
+	margin: auto;
+	background-color: #225522;
+	padding: 10px;
+	font-family: helvetica, arial, sans-serif;
+	color: #22aaaa;;
+}
+
+.appMenu {
+	position: absolute;
+	top: 0px;
+	left:0px;
+	width: 15%;
+	min-width: 5rem;
+	height: 100%;
+	margin: 0;
+	background-color: #999999;
+	border-right:2px black solid;
+	padding:5px;
+	font-family: helvetica, arial, sans-serif;
+	font-size:12pt;
+}
+
+.titleBlock
+{
+	font-size:14pt;
+	font-weight:bold;
+}
+
+.filterList
+{
+	font-size:10pt;
+}
+
+/*  TODO: mq/ above looks okay until about 650px  */
+
+

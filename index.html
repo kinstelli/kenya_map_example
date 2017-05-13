@@ -1,26 +1,42 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 	<title>Proof of concept...</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="App.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.5/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="app.css" />
 </head>
 <body>
 
+<div class="mapContainer">
 <div id="mapid" class="mapPane"></div>
-	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin=""></script>	
-	<script src="js/vendor/leaflet.ajax.min.js"></script>
-    <script src="js/map.js"></script>
+<div id="app_status" class="statusBox">
+	<div>This is some information the user might want to see.</div>
+</div>
+</div>
 
 <div id="controls" class="appMenu">
+	
+	<div class="titleBlock">Here is a title</div>
+	
 	<div>Clustering: <button>on</button> <button>off</button></div>
-	<div>Filter by...
-	<div>NG Programme:</div>
+	
+	<div></div>
+	
+	<div><b>Filter by...</b>
+	<ul class="filterList">	
+		<il>NG Programme</il>
+	</ul>
 	</div>
 </div>
 
+
+
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>	
+<script src="https://unpkg.com/leaflet.markercluster@1.0.5/dist/leaflet.markercluster.js"></script>
+<script src="js/vendor/leaflet.ajax.min.js"></script>
+<script src="js/map.js"></script>
 </body>
 </html>
