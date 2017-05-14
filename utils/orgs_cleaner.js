@@ -49,6 +49,9 @@ parsedJSON.features = newCollection;
 
 //then write it out to new file
 const newJsonString = JSON.stringify(parsedJSON);
+
+
+
 fs.writeFile(fileOutPath, newJsonString, function (err) {
 	if (err)
 	{

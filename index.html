@@ -29,12 +29,35 @@
 		<button ng-click="toggleClustering()">{{ !showClusters }}</button>
 	</div>
 
-	<div class="filterBox"><b>Filter by...</b>
+	<div class="filterBox"><b>Color counties.</b>
 	<ul class="filterList">	
-		<il ng-click='filterBy("")'>Projects With Names</il>
-		<il ng-click='filterBy("")'>NG Programme</il>
+		<il ng-click='colorBy("")'>By Projects</il>
+		<il ng-click='colorBy("")'>By Avg Proj Cost</il>
 	</ul>
 	</div>
+
+	<div class="filterBox"><b>Filter projects</b>
+		
+		<div class="filterBox">
+		<input type='checkbox' ng-model="projFilter.showOnlyProjsWithTitle" />Only titled projs
+		</div>
+
+		<div class="filterBox">
+		<label htmlFor="titleKWInput">Title (partial)</label>
+		<input name="titleKWInput" type='text' ng-model="projFilter.titleKeyword" value="" /></div>
+		</div>
+
+
+
+		<div class="filterBox">Filter by NG Programme</div>
+        <select name="ngProgramsToShow" ng-model="projFilter.ngProgrammeFilter" multiple style="height:15em;width: 98%;">
+            <option ng-repeat="ngprog in uniquePropValues.ng_programme" value="{{ ngprog }}" >{{ngprog | displayOnlyAfterHyphen }}</option>
+		</select>
+		<button ng-click="doFilter()">Filter Projects</button>
+		<button ng-click="clearFilters()">Clear Filters</button>
+	</div>
+	
+
 	</div>
 
 
