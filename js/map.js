@@ -1,17 +1,45 @@
 var app = angular.module('projectsMapApp', []);
 
+app.filter('displayOnlyAfterHyphen', function() {
+        return function(input) {
+        	if (input !== null)
+        	{
+	            var splitResult = input.split("-");
+	        	if ( splitResult !== null && splitResult.length > 1)
+	        	{
+	        		return splitResult[1];
+	        	}
+        	}
+        	return null;
+        }
+    });
+
+
 var baseUrl = 'http://localhost:5000';
 
 //TODO: hide authtoken and other configs on server side
 app.controller('appCtrlr', function($scope, $http, $q) {
 
  	$scope.theMap = L.map('mapid').setView([0.0515, 38.09], 6);
+	$scope.projFilter = { 
+				showOnlyProjsWithTitle: false, 
+				ngProgrammeFilter: null,
+				titleKeyword: null,
+				descKeyword: null,
+		};
 
 	$scope.doInit = function()
 	{
 		//collection vars to init
 		$scope.projSet = [];
 		$scope.countySet = [];
+		
+		//TODO: this object will store unique values from various project properties
+		//	for dynamic picklist options, etc
+		$scope.uniquePropValues = { };
+		$scope.propsNotToIndex = ['objectid','total_project_cost__kes_','projectid','x','y','project_description','project_objectives'];
+
+
 
 		$scope.displayStatus = 'Inited.';
 		$scope.showClusters = true;
@@ -21,6 +49,49 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		$scope.currentlyRendering = true; 
 		$scope.loadTheData();
 	}
+
+	// this is passed to each prop to collect values to index (Note: resource intensive - O2)
+	$scope.collectUniqueValues = function()
+	{
+		$scope.projSet.map(function(proj)
+		{
+			for(var aProp in proj.properties)
+			{
+				if ($scope.propsNotToIndex.indexOf(aProp) < 0)
+				{
+					//console.log('check if unique:',aProp, proj.properties[aProp] );
+				addPropValueIfUnique(aProp, proj.properties[aProp]);
+				}	
+			}
+		});
+		console.log('Unique values found:', $scope.uniquePropValues);
+	}
+
+	var addPropValueIfUnique = function(projProp, curValue)
+	{
+		if ($scope.uniquePropValues.hasOwnProperty(projProp))
+		{
+			if ($scope.uniquePropValues[projProp].indexOf(curValue) > -1)
+			{
+				//console.log($scope.uniquePropValues[projProp],' already contains?: ', curValue );
+				return; 
+			}else //no? then add it
+			{
+				$scope.uniquePropValues[projProp].push(curValue);
+			}
+		}else{//	property doesn't exist yet. add prop and an array containing the value.
+
+			$scope.uniquePropValues[projProp] = [curValue];
+		}
+	}
+
+	$scope.orderNGProgramByText = function(fullProgText) {
+		 if(fullProgText.indexOf('-') > -1 && fullProgText.indexOf('-') < fullProgText.length)
+		 {
+		 	return fullProgText.split('-');
+		 }
+  		 console.log(fullProgText);
+	};
 
 	$scope.setTheTile = function()
 	{
@@ -55,7 +126,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		$scope.addCountyDataToMap();
 	}
 
-	//TODO: use Angular filters to filter the data...
 
 	$scope.clearAllLayers = function()
 	{
@@ -73,25 +143,91 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 				$scope.loadCountyData()])
 			.then(
 					function(){
-						console.log('Currently loaded: ' + $scope.projSet.length + ' projects.');
-						console.log('Currently loaded: ' + $scope.countySet.length + ' counties.');
-						
+						console.log('Loaded: ' + $scope.projSet.length + ' projects.');
+						console.log('Loaded: ' + $scope.countySet.length + ' counties.');
+						$scope.collectUniqueValues();
 						$scope.addProjectsToMap();
 						$scope.addCountyDataToMap();
 					}
 					);
 	}
 
+	$scope.doFilter = function()
+	{
+		console.log('doing filter...', $scope.projFilter);
+		//set the filter, rerender data.
+		$scope.reRenderMap();
+	}
+
+	$scope.clearFilters = function()
+	{
+		$scope.projFilter = { 
+				showOnlyProjsWithTitle: false, 
+				ngProgrammeFilter: null,
+				titleKeyword: null,
+				descKeyword: null,
+		};
+		$scope.doFilter();
+	}
+
+	//TODO: finish this filter callback
+	function projFilterFunc(proj)
+	{
+		var filtersPassed = 0; 
+		var filtersToPass = 0;
+		
+		if($scope.projFilter.showOnlyProjsWithTitle)
+		{
+			console.log('only showing projs with title');
+			filtersToPass++;
+			if (proj.properties.project_title !== null)
+			{
+				filtersPassed++;
+			}
+		}
+
+		if ($scope.projFilter.titleKeyword !== null)
+		{
+			filtersToPass++;
+
+			console.log('keyword search:' + $scope.projFilter.titleKeyword);
+			if(proj.properties.hasOwnProperty('project_title') && 
+				proj.properties.project_title !== null &&
+				proj.properties.project_title.toLowerCase().indexOf($scope.projFilter.titleKeyword.toLowerCase()) > -1)
+			{
+				filtersPassed++;
+			}
+		}
+		// 
+		if ($scope.projFilter.ngProgrammeFilter !== null && $scope.projFilter.ngProgrammeFilter.length > 0)
+		{
+			filtersToPass++;
+			console.log('filtering by programme');
+			if(proj.properties.hasOwnProperty('ng_programme') && 
+				proj.properties.ng_programme !== null &&
+				//note that this is doing indexOf an array, not a string
+				$scope.projFilter.ngProgrammeFilter.indexOf(proj.properties.ng_programme) > -1)
+			{
+				filtersPassed++;
+			}
+		}
+		
+		return (filtersPassed >= filtersToPass )
+	}
+
 	$scope.addProjectsToMap = function()
 	{
-		$scope.currentlyRendering = true; 
-		var theFeatures = $scope.projSet;
+		$scope.filteredProjSet = $scope.projSet.filter(projFilterFunc);
+
 		var markerClusters = L.markerClusterGroup();
 
-		for(var i =0; i < theFeatures.length; i++)
+		//TODO: convert to map, to better handle filters
+		for(var i =0; i < $scope.filteredProjSet.length; i++)
 		{
+			//TODO:? apply proj filter in this loop?
+
 			$scope.displayStatus += '.';
-			var props = theFeatures[i].properties;
+			var props = $scope.filteredProjSet[i].properties;
 			var popupMarkup = $scope.buildPopupMarkup(props);
 
 			if ($scope.showClusters)
@@ -102,7 +238,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 			}else
 			{
 				//TODO: why use a diff format here, versus clusters format?
-				L.geoJSON(theFeatures[i]).bindPopup( popupMarkup )
+				L.geoJSON($scope.filteredProjSet[i]).bindPopup( popupMarkup )
 				.addTo($scope.theMap);
 			}
 		}
@@ -118,7 +254,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	$scope.loadProjectData = function()
 	{
-		console.log('loading proj data');
 		//returning the result at end of chain, which is a Promise
 		return $http.get(baseUrl + '/data/prunedprojdata.geojson')
 				.then(function(results){ 
@@ -129,7 +264,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	$scope.addCountyDataToMap = function()
 	{
 		$scope.calcCountyStats();
-		console.log('county stats are now:', $scope.countyStats);
 
 		$scope.currentlyRendering = true; 
 		var counties = $scope.countySet;
@@ -144,7 +278,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	$scope.loadCountyData = function()
 	{
-		console.log('Current county stats:' , $scope.countyStats);
 		//returning the result at end of chain, which is a Promise
 		return $http.get( baseUrl + '/data/counties.geojson')
 					.then(function(countiesObj){
@@ -152,12 +285,14 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 			});
 	}
 
+	//TODO: include avg. cost data
+	//TODO: update this to display stats based on currently shown projs, not all loaded projs
 	$scope.calcCountyStats = function()
 	{
 		$scope.countyStats = { }; //re init this
-		for (var i = 0; i < $scope.projSet.length; i++)
+		for (var i = 0; i < $scope.filteredProjSet.length; i++)
 		{
-			var props = $scope.projSet[i].properties;
+			var props = $scope.filteredProjSet[i].properties;
 			if (props.county !== null)
 			{
 				var curCounty = props.county.toUpperCase();
@@ -173,7 +308,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 		//then store the max of county stats into same object
 		var maxCount = 0;
-		for (let prop in $scope.countyStats)
+		for (var prop in $scope.countyStats)
 		{
 			if ($scope.countyStats[prop] > maxCount)
 			{ maxCount = $scope.countyStats[prop]; }
