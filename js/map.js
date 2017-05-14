@@ -37,9 +37,8 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		//TODO: this object will store unique values from various project properties
 		//	for dynamic picklist options, etc
 		$scope.uniquePropValues = { };
-		$scope.propsNotToIndex = ['objectid','total_project_cost__kes_','projectid','x','y','project_description','project_objectives'];
-
-
+		$scope.propsNotToIndex = ['objectid','total_project_cost__kes_',
+					'projectid','x','y','project_description','project_objectives'];
 
 		$scope.displayStatus = 'Inited.';
 		$scope.showClusters = true;
@@ -154,7 +153,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	$scope.doFilter = function()
 	{
-		console.log('doing filter...', $scope.projFilter);
 		//set the filter, rerender data.
 		$scope.reRenderMap();
 	}
@@ -258,6 +256,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		return $http.get(baseUrl + '/data/prunedprojdata.geojson')
 				.then(function(results){ 
 					$scope.projSet = results.data.features;
+					$scope.filteredProjSet = $scope.projSet.slice(); // init a copy
 				});
 	}
 
@@ -332,12 +331,16 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	$scope.getChloroplethStyle = function(countyObj)
 	{
-		var maxCount = $scope.countyStats.maxCount;
-		var projsPerCounty = $scope.countyStats[countyObj.properties.COUNTY_NAM];
+		var maxCount = ( 1 + $scope.countyStats.maxCount); // so range = 0 - maxCount
+		var projsPerCounty = (typeof($scope.countyStats[countyObj.properties.COUNTY_NAM]) === 'undefined' ? 0 : $scope.countyStats[countyObj.properties.COUNTY_NAM]);
+		console.log('maxCount is: ', maxCount, 'projsPerCounty:', projsPerCounty);
 
 		//TODO: build a linear curve with the mean & min/max of projs per county
-		var dynColor = Math.round( ( 255 - (maxCount) ) +  (($scope.countyStats[countyObj.properties.COUNTY_NAM]) * 8)  );
+		var dynColor = Math.round( 254 - ((projsPerCounty * (maxCount / (maxCount * 0.10)) *  (255 / maxCount)) + 1));
 		
+		//if range is 0-5
+		// min should be 0 (+ min color) - 5 / 255
+
 		var blueVal = 255;
 		var greenVal = 	dynColor;
 		var redVal = dynColor;
