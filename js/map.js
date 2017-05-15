@@ -14,7 +14,6 @@ app.filter('displayOnlyAfterHyphen', function() {
         }
     });
 
-
 var baseUrl = 'http://localhost:5000';
 
 //TODO: hide authtoken and other configs on server side
@@ -85,12 +84,13 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		}
 	}
 
+	//TODO: finish this
 	$scope.orderNGProgramByText = function(fullProgText) {
-		 if(fullProgText.indexOf('-') > -1 && fullProgText.indexOf('-') < fullProgText.length)
+		 if(fullProgText !== null && fullProgText.indexOf('-') > -1)
 		 {
-		 	return fullProgText.split('-');
+		 	return fullProgText.split('-')[1];
 		 }
-  		 console.log(fullProgText);
+		 return null;
 	};
 
 	$scope.setTheTile = function()
@@ -333,7 +333,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	{
 		var maxCount = ( 1 + $scope.countyStats.maxCount); // so range = 0 -> maxCount
 		var projsPerCounty = (typeof($scope.countyStats[countyObj.properties.COUNTY_NAM]) === 'undefined' ? 0 : $scope.countyStats[countyObj.properties.COUNTY_NAM]);
-		console.log('maxCount is: ', maxCount, 'projsPerCounty:', projsPerCounty);
 		//TODO: build a linear curve with the mean & min/max of projs per county
 		var dynColor = Math.round( 254 - ((projsPerCounty * (maxCount / (maxCount * 0.10)) *  (255 / maxCount)) + 1));
 		

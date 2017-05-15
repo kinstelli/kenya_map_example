@@ -51,7 +51,7 @@
 
 		<div class="filterBox">Filter by NG Programme</div>
         <select name="ngProgramsToShow" ng-model="projFilter.ngProgrammeFilter" multiple style="height:15em;width: 98%;">
-            <option ng-repeat="ngprog in uniquePropValues.ng_programme" value="{{ ngprog }}" >{{ngprog | displayOnlyAfterHyphen }}</option>
+            <option ng-repeat="ngprog in uniquePropValues.ng_programme | orderBy:orderNGProgramByText" value="{{ ngprog }}" >{{ngprog | displayOnlyAfterHyphen }}</option>
 		</select>
 		<button ng-click="doFilter()">Filter Projects</button>
 		<button ng-click="clearFilters()">Clear Filters</button>
