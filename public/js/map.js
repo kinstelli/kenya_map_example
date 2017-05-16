@@ -14,7 +14,7 @@ app.filter('displayOnlyAfterHyphen', function() {
         }
     });
 
-var baseUrl = 'http://localhost:5000';
+var baseUrl = '..';
 
 //TODO: hide authtoken and other configs on server side
 app.controller('appCtrlr', function($scope, $http, $q) {
