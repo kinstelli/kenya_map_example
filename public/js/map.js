@@ -14,8 +14,6 @@ app.filter('displayOnlyAfterHyphen', function() {
         }
     });
 
-var baseUrl = '..';
-
 //TODO: hide authtoken and other configs on server side
 app.controller('appCtrlr', function($scope, $http, $q) {
 
@@ -33,6 +31,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	{
 		//collection vars to init
 		$scope.projSet = [];
+		$scope.displayStatus = '';
 		$scope.countySet = [];
 		$scope.countyStats = { }; //re init this
 		$scope.clusterButtonText = 'Uncluster Projects';
@@ -60,23 +59,18 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 			{
 				if ($scope.propsNotToIndex.indexOf(aProp) < 0)
 				{
-					//console.log('check if unique:',aProp, proj.properties[aProp] );
 				addPropValueIfUnique(aProp, proj.properties[aProp]);
 				}	
 			}
 		});
-		console.log('Unique values found:', $scope.uniquePropValues);
 	}
 
 	var addPropValueIfUnique = function(projProp, curValue)
 	{
-		
-
 		if ($scope.uniquePropValues.hasOwnProperty(projProp))
 		{
 			if ($scope.uniquePropValues[projProp].indexOf(curValue) > -1)
 			{
-				//console.log($scope.uniquePropValues[projProp],' already contains?: ', curValue );
 				return; 
 			}else //no? then add it
 			{
@@ -86,7 +80,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 			$scope.uniquePropValues[projProp] = [curValue];
 		}
-
 	}
 
 	//TODO: finish this
@@ -129,21 +122,19 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	$scope.colorBy = function(textValue)
 	{
 		$scope.mapColorStat = textValue;
-		//redraw county cholorpleth
 		$scope.reRenderMap();
 	}
 
 	$scope.reRenderMap = function()
 	{
+	//TODO: turn add*ToMap methods into promises to accurately know when complete
+		$scope.currentlyRendering = true; 
+		$scope.clearAllLayers();
+		$scope.setTheTile();
+		$scope.addProjectsToMap();
+		$scope.addCountyDataToMap();
 
-		//TODO: turn add*ToMap methods into promises to accurately know when complete
-		setTimeout(function() {
-        	$scope.currentlyRendering = true; 
-			$scope.clearAllLayers();
-			$scope.setTheTile();
-			$scope.addProjectsToMap();
-			$scope.addCountyDataToMap();
-		}, 0);
+		$scope.displayStatus = 'Displaying ' + $scope.filteredProjSet.length + ' of ' + $scope.projSet.length + ' projects.';
 	}
 
 
@@ -197,7 +188,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		
 		if($scope.projFilter.showOnlyProjsWithTitle)
 		{
-			console.log('only showing projs with title');
 			filtersToPass++;
 			if (proj.properties.project_title !== null)
 			{
@@ -208,8 +198,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		if ($scope.projFilter.titleKeyword !== null)
 		{
 			filtersToPass++;
-
-			console.log('keyword search:' + $scope.projFilter.titleKeyword);
 			if(proj.properties.hasOwnProperty('project_title') && 
 				proj.properties.project_title !== null &&
 				proj.properties.project_title.toLowerCase().indexOf($scope.projFilter.titleKeyword.toLowerCase()) > -1)
@@ -264,12 +252,13 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		{
 			$scope.theMap.addLayer(markerClusters);	
 		}
+
 	}
 
 	$scope.loadProjectData = function()
 	{
 		//returning the result at end of chain, which is a Promise
-		return $http.get(baseUrl + '/data/prunedprojdata.geojson')
+		return $http.get('/data/prunedprojdata.geojson')
 				.then(function(results){ 
 					$scope.projSet = results.data.features;
 					$scope.filteredProjSet = $scope.projSet.slice(); // init a copy
@@ -293,7 +282,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	$scope.loadCountyData = function()
 	{
 		//returning the result at end of chain, which is a Promise
-		return $http.get( baseUrl + '/data/counties.geojson')
+		return $http.get('/data/counties.geojson')
 					.then(function(countiesObj){
 						$scope.countySet = countiesObj.data.features;
 			});

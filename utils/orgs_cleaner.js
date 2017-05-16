@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const fileInPath = '../data/Distribution_of_Donor_and_GOK_Funded_Projects_2013_to_2015.geojson';
-const fileOutPath = '../data/prunedprojdata.geojson';
+const fileInPath = '../public/data/Distribution_of_Donor_and_GOK_Funded_Projects_2013_to_2015.geojson';
+const fileOutPath = '../public/data/prunedprojdata.geojson';
 
 const unusedFields = ['ward', 'approval_date', 'start_date__planned_','constituency',
 					'start_date__actual_', 'end_date__planned_', 'end_date__actual_',
@@ -49,8 +49,6 @@ parsedJSON.features = newCollection;
 
 //then write it out to new file
 const newJsonString = JSON.stringify(parsedJSON);
-
-
 
 fs.writeFile(fileOutPath, newJsonString, function (err) {
 	if (err)

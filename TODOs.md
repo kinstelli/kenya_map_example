@@ -1,16 +1,14 @@
 TODO:
-	* REQ - add up totalcosts by county, use proj total to calc avg
-	* REQ - shade areas by average project cost in that county 
-	* change built-in PHP server to Node.js standalone server
-	* sort project types alphabetically -- either in stats obj or w/ special func
+	* fix spinner overlay to be asynch'd against render functions
+	only allow unique text in ng programme filter
+	decompose code into proper Angular factories, directives, components etc
+	Add build process via gulp/webpack
 	add promises to rendering functions, so it's easier to handle when they're done
 	hide various configs on server side
-	decompose code into proper Angular factories, directives, components etc
 	add mediaqueries for mobile?
 	normalize some data into other JSON files, split from full JSON file
-	Add build process via webpack
 	Include lodash/underscore, (replace indexOf with contains, etc)
-	sort NGProgram list by text
+	Add better alternative to the ugly multi-select box
 
 WOULD BE NICE:
 	icons for different proj types

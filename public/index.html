@@ -26,36 +26,45 @@
 	
 	<div class="titleBlock">Projects Map</div>
 	<div>
+		<div class="filterBox"><b>Clustering</b><br/>
+		<div><br/>
 		<button ng-click="toggleClustering()">{{ clusterButtonText }}</button>
+		</div>
 	</div>
 
-	<div class="filterBox"><b>Color counties.</b>
-	<ul class="filterList">	
-		<il ng-click='colorBy("projCount")'>By Projects</il>
-		<il ng-click='colorBy("avgCost")'>By Avg Proj Cost</il>
-		{{  mapColorStat }}
-	</ul>
+	<div class="filterBox"><b>County coloring</b>
+	<div class="filterList">	
+		<input type="radio" ng-model="mapColorStat" name="colorByRadio" ng-change="colorBy('projCount')" value="projCount" id="colByProj">
+		<label for="colByProj">By project count</label>
+		<br/>
+		<input type="radio" ng-model="mapColorStat" name="colorByRadio" ng-change="colorBy('avgCost')" value="avgCost" id="colByAvg">
+			<label for="colByAvg">By avg project cost</label>
+	</div>
 	</div>
 
 	<div class="filterBox"><b>Filter projects</b>
 		
-		<div class="filterBox">
-		<input type='checkbox' ng-model="projFilter.showOnlyProjsWithTitle" />Only titled projs
+		<div class="filterList">
+		<input type='checkbox' id="titledProjsCheckbox" ng-model="projFilter.showOnlyProjsWithTitle" />
+		<label for="titledProjsCheckbox"> Show only titled projects</label>
 		</div>
 
-		<div class="filterBox">
-		<label htmlFor="titleKWInput">Title (partial)</label>
+		<div class="filterList">
+		<label for="titleKWInput">Filter by partial title search</label>
+		<br/>
 		<input name="titleKWInput" type='text' ng-model="projFilter.titleKeyword" value="" /></div>
 		</div>
 
 
 
-		<div class="filterBox">Filter by NG Programme</div>
+		<div class="filterList">Filter by NG Programme</div>
         <select name="ngProgramsToShow" ng-model="projFilter.ngProgrammeFilter" multiple style="height:15em;width: 98%;">
             <option ng-repeat="ngprog in uniquePropValues.ng_programme | orderBy:orderNGProgramByText" value="{{ ngprog }}" >{{ngprog | displayOnlyAfterHyphen }}</option>
 		</select>
+		<div><br/>
 		<button ng-click="doFilter()">Filter Projects</button>
 		<button ng-click="clearFilters()">Clear Filters</button>
+		</div>
 	</div>
 
 	</div>

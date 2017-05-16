@@ -1,2 +1,4 @@
+public/data
 data
+*geojson
 .DS_Store

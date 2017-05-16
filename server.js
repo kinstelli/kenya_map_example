@@ -11,7 +11,3 @@ var server = app.listen(app.get('port'), function() {
   console.log('App is being served at http://localhost:' + port);
 });
 
-var express = require('express');
-var path = require('path');
-var app = express();
-

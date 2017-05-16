@@ -4,7 +4,7 @@
 	top:0px;
 	background-color:#222222;
 	right: 0px;
-	width: 85%; 
+	width: 80%; 
 	height: 100%; 
 	margin: 0;
 	border-left:2px black solid;
@@ -13,6 +13,16 @@
 .filterBox
 {
 	margin-top: 1em; 
+}
+
+.filterList
+{
+	padding-top: 1em;
+	font-size:1rem;
+}
+.customButton
+{
+
 }
 
 .projDescText, .projObjectivesText
@@ -48,31 +58,28 @@
 }
 
 .appMenu {
+	padding:5px;
 	position: absolute;
 	top: 0px;
 	left:0px;
-	width: 15%;
+	width: 20%;
 	min-width: 5rem;
 	height: 100%;
 	margin: 0;
-	background-color: #999999;
+	background-color: #00ccee;
 	border-right:2px black solid;
-	padding:5px;
 	font-family: helvetica, arial, sans-serif;
 	font-size:12pt;
 }
 
 .titleBlock
 {
+	padding-top:5px;
 	font-size:14pt;
 	font-weight:bold;
 }
 
-.filterList
-{
-	font-size:10pt;
-}
 
-/*  TODO: mq/ above looks okay until about 650px  */
+/*  TODO: mq/ above looks okay until about <650px  */
 
 
