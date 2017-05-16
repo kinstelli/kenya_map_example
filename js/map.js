@@ -27,21 +27,23 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 				descKeyword: null,
 		};
 
+
+
 	$scope.doInit = function()
 	{
 		//collection vars to init
 		$scope.projSet = [];
 		$scope.countySet = [];
 		$scope.countyStats = { }; //re init this
+		$scope.clusterButtonText = 'Uncluster Projects';
+		$scope.showClusters = true;
+		$scope.mapColorStat = 'projTotal';
 
 		//this object will store unique values from various project properties
 		//	for dynamic picklist options, etc
 		$scope.uniquePropValues = { };
 		$scope.propsNotToIndex = ['objectid','total_project_cost__kes_',
 					'projectid','x','y','project_description','project_objectives'];
-
-		$scope.displayStatus = 'Inited.';
-		$scope.showClusters = true;
 
 		//first functions to load...
 		$scope.setTheTile();
@@ -68,6 +70,8 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	var addPropValueIfUnique = function(projProp, curValue)
 	{
+		
+
 		if ($scope.uniquePropValues.hasOwnProperty(projProp))
 		{
 			if ($scope.uniquePropValues[projProp].indexOf(curValue) > -1)
@@ -82,6 +86,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 			$scope.uniquePropValues[projProp] = [curValue];
 		}
+
 	}
 
 	//TODO: finish this
@@ -105,31 +110,45 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		}).addTo($scope.theMap);
 	}
 
-	//TODO: don't actually clear ALL the layers on cluster toggle rerender,
+	//don't actually clear ALL the layers on cluster toggle rerender,
 	// just clear the projects/clusters
 	$scope.toggleClustering = function()
 	{
+		$scope.currentlyRendering = true; 
 		$scope.showClusters = (!$scope.showClusters);
+		if($scope.showClusters)
+		{
+			$scope.clusterButtonText = 'Uncluster Projects';
+		}else
+		{
+			$scope.clusterButtonText = 'Cluster Projects';
+		}
 		$scope.reRenderMap();
 	}
 
+	$scope.colorBy = function(textValue)
+	{
+		$scope.mapColorStat = textValue;
+		//redraw county cholorpleth
+		$scope.reRenderMap();
+	}
 
 	$scope.reRenderMap = function()
 	{
-		$scope.currentlyRendering = true; 
-		$scope.clearAllLayers();
-		$scope.displayStatus = 'Loading features into map';
-		$scope.setTheTile();
 
-		//TODO: turn add*ToMap methods into promises
-		$scope.addProjectsToMap();
-		$scope.addCountyDataToMap();
+		//TODO: turn add*ToMap methods into promises to accurately know when complete
+		setTimeout(function() {
+        	$scope.currentlyRendering = true; 
+			$scope.clearAllLayers();
+			$scope.setTheTile();
+			$scope.addProjectsToMap();
+			$scope.addCountyDataToMap();
+		}, 0);
 	}
 
 
 	$scope.clearAllLayers = function()
 	{
-		$scope.displayStatus = 'Re-rendering...';
 		$scope.theMap.eachLayer(function (layer) {
     		$scope.theMap.removeLayer(layer);
 		});
@@ -148,6 +167,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 						$scope.collectUniqueValues();
 						$scope.addProjectsToMap();
 						$scope.addCountyDataToMap();
+						$scope.currentlyRendering = false;
 					}
 					);
 	}
@@ -201,7 +221,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		if ($scope.projFilter.ngProgrammeFilter !== null && $scope.projFilter.ngProgrammeFilter.length > 0)
 		{
 			filtersToPass++;
-			console.log('filtering by programme');
 			if(proj.properties.hasOwnProperty('ng_programme') && 
 				proj.properties.ng_programme !== null &&
 				//note that this is doing indexOf an array, not a string
@@ -224,8 +243,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		for(var i =0; i < $scope.filteredProjSet.length; i++)
 		{
 			//TODO:? apply proj filter in this loop?
-
-			$scope.displayStatus += '.';
 			var props = $scope.filteredProjSet[i].properties;
 			var popupMarkup = $scope.buildPopupMarkup(props);
 
@@ -247,8 +264,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		{
 			$scope.theMap.addLayer(markerClusters);	
 		}
-		$scope.displayStatus = 'Finished loading features.';
-		$scope.currentlyRendering = false; 
 	}
 
 	$scope.loadProjectData = function()
@@ -265,7 +280,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	{
 		$scope.calcCountyStats();
 
-		$scope.currentlyRendering = true; 
 		var counties = $scope.countySet;
 		for(var i =0; i < counties.length; i++)
 		{
@@ -286,7 +300,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	}
 
 	//TODO: include avg. cost data
-	//TODO: update this to display stats based on currently shown projs, not all loaded projs
 	$scope.calcCountyStats = function()
 	{
 		$scope.countyStats = { }; //re init this
@@ -299,22 +312,58 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 				//then incr count of proj per county
 				if ($scope.countyStats.hasOwnProperty( curCounty ))
 				{
-					$scope.countyStats[curCounty] += 1;
+					$scope.countyStats[curCounty].projCount += 1;
 				}else{
-					$scope.countyStats[curCounty] = 1;
+					$scope.countyStats[curCounty] = {projCount: 1};
 				}
-			}		
-		}
-		//then store the max of county stats into same object
-		var maxCount = 0;
-		for (var prop in $scope.countyStats)
-		{
-			if ($scope.countyStats[prop] > maxCount)
-			{ maxCount = $scope.countyStats[prop]; }
-		}
-		$scope.countyStats.maxCount = maxCount;
+				// now that a record has been added, include proj costs
+				if (props.total_project_cost__kes_ !== null)
+				{
+					if ($scope.countyStats[curCounty].hasOwnProperty('projCosts'))
+					{
+						$scope.countyStats[curCounty].projCosts += (props.total_project_cost__kes_);
+						$scope.countyStats[curCounty].projsWithCost += 1;
+					}else
+					{
+						$scope.countyStats[curCounty]['projCosts'] = (props.total_project_cost__kes_);
+						$scope.countyStats[curCounty]['projsWithCost'] = 1;
+					}
+				}
+			}	
+		}	
+		calcMinMaxForCountyStats();
 	}
 
+	function calcMinMaxForCountyStats()
+	{
+		//then store the max of county stats into same object
+		var maxCount = 0;
+		var maxAvgCost = 0;
+		var minAvgCost = null;
+
+		for (var prop in $scope.countyStats)
+		{
+			if ($scope.countyStats[prop].projCount > maxCount)
+			{ maxCount = $scope.countyStats[prop].projCount; }
+			//calc averages
+			if ($scope.countyStats[prop].projsWithCost > 0)
+			{
+				var countyAvg = Math.round($scope.countyStats[prop].projCosts / $scope.countyStats[prop].projsWithCost);
+				if (countyAvg > maxAvgCost)
+				{
+					maxAvgCost = countyAvg;
+				}
+				if(countyAvg < minAvgCost || minAvgCost === null)
+				{
+					minAvgCost = countyAvg;
+				}
+			} 
+		}
+		//store these in same object for later
+		$scope.countyStats.maxCount = maxCount;
+		$scope.countyStats.maxAvgCost = maxAvgCost;
+		$scope.countyStats.minAvgCost = minAvgCost;
+	}
 
 	$scope.buildPopupMarkup = function(props)
 	{
@@ -331,10 +380,36 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	$scope.getChloroplethStyle = function(countyObj)
 	{
-		var maxCount = ( 1 + $scope.countyStats.maxCount); // so range = 0 -> maxCount
-		var projsPerCounty = (typeof($scope.countyStats[countyObj.properties.COUNTY_NAM]) === 'undefined' ? 0 : $scope.countyStats[countyObj.properties.COUNTY_NAM]);
-		//TODO: build a linear curve with the mean & min/max of projs per county
-		var dynColor = Math.round( 254 - ((projsPerCounty * (maxCount / (maxCount * 0.10)) *  (255 / maxCount)) + 1));
+		var countyValue = 0;
+		var maxCount = 1;
+		var dynColor = 255;
+
+		var curCountyStats = {};
+		if (typeof $scope.countyStats[countyObj.properties.COUNTY_NAM] !== 'undefined')
+		{
+			curCountyStats = $scope.countyStats[countyObj.properties.COUNTY_NAM];
+		}
+
+		// what are we coloring?
+		if ($scope.mapColorStat === 'avgCost')
+		{
+			maxCount = ( 1 + $scope.countyStats.maxAvgCost); 
+			var minAvgCost = $scope.countyStats.minAvgCost; 
+			var costRange = (maxCount - minAvgCost);
+
+			if (curCountyStats.hasOwnProperty('projsWithCost') && curCountyStats.projsWithCost > 0)
+			{
+				countyValue = 1 + (curCountyStats.projCosts / curCountyStats.projsWithCost);
+				dynColor = Math.round( 255 - ( ((countyValue - minAvgCost) * 255 * (15)) / costRange + 1) );
+			} 
+
+		}else{ // assume projCount...or garbage-in-projCount-out
+			
+			maxCount = ( 1 + $scope.countyStats.maxCount); // so range = 0 -> maxCount
+			countyValue = (typeof(curCountyStats.projCount) === 'undefined' ? 0 : curCountyStats.projCount);
+			//TODO: build a linear curve with the mean & min/max of projs per county
+			dynColor = Math.round( 254 - ((countyValue * 10) *  (255 / maxCount)) + 1);
+		}
 		
 		var blueVal = 255;
 		var greenVal = 	dynColor;

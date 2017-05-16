@@ -25,14 +25,15 @@
 	<div id="controls" class="appMenu">
 	
 	<div class="titleBlock">Projects Map</div>
-	<div>Cluster data?: 
-		<button ng-click="toggleClustering()">{{ !showClusters }}</button>
+	<div>
+		<button ng-click="toggleClustering()">{{ clusterButtonText }}</button>
 	</div>
 
 	<div class="filterBox"><b>Color counties.</b>
 	<ul class="filterList">	
-		<il ng-click='colorBy("")'>By Projects</il>
-		<il ng-click='colorBy("")'>By Avg Proj Cost</il>
+		<il ng-click='colorBy("projCount")'>By Projects</il>
+		<il ng-click='colorBy("avgCost")'>By Avg Proj Cost</il>
+		{{  mapColorStat }}
 	</ul>
 	</div>
 
@@ -56,12 +57,10 @@
 		<button ng-click="doFilter()">Filter Projects</button>
 		<button ng-click="clearFilters()">Clear Filters</button>
 	</div>
-	
 
 	</div>
 
-
-	<div class="spinnyOverlay"  ng-show="currentlyRendering">
+	<div id="spinnyOverlay" class="spinnyOverlay"  ng-show="currentlyRendering">
 		<img src="imgs/loading.gif" />
 	</div>
 </div>
