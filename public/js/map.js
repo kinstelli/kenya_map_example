@@ -67,19 +67,44 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 
 	var addPropValueIfUnique = function(projProp, curValue)
 	{
+		//special case for ng programme - strip out -
+		if (projProp === 'ng_programme' && curValue !== null)
+		{
+			curValue = stripNumbersFromNGProgramme(curValue);
+		} 
+
 		if ($scope.uniquePropValues.hasOwnProperty(projProp))
 		{
+			
+
 			if ($scope.uniquePropValues[projProp].indexOf(curValue) > -1)
 			{
 				return; 
 			}else //no? then add it
 			{
+				
 				$scope.uniquePropValues[projProp].push(curValue);
 			}
 		}else{//	property doesn't exist yet. add prop and an array containing the value.
 
 			$scope.uniquePropValues[projProp] = [curValue];
 		}
+	}
+
+	var stripNumbersFromNGProgramme = function(progName)
+	{
+		var returnStr = progName;
+		console.log(progName);
+		if (progName.indexOf('-') > -1)
+		{
+			returnStr = progName.split('-')[1];
+		}
+		if (returnStr.indexOf(';') > -1)
+		{
+			returnStr = returnStr.split(';')[0];
+		}
+		console.log(returnStr);
+		return returnStr;
 	}
 
 	//TODO: finish this
@@ -180,7 +205,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		$scope.doFilter();
 	}
 
-	//TODO: finish this filter callback
+	//TODO: decompose this
 	function projFilterFunc(proj)
 	{
 		var filtersPassed = 0; 
@@ -205,14 +230,21 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 				filtersPassed++;
 			}
 		}
-		// 
-		if ($scope.projFilter.ngProgrammeFilter !== null && $scope.projFilter.ngProgrammeFilter.length > 0)
+		
+		if ($scope.projFilter.ngProgrammeFilter !== null && 
+			$scope.projFilter.ngProgrammeFilter.length > 0)
 		{
+			var projNGProgramme = '';
+			if (proj.properties.ng_programme !== null)
+			{
+				projNGProgramme = proj.properties.ng_programme.split('-')[1];
+			}
+
 			filtersToPass++;
 			if(proj.properties.hasOwnProperty('ng_programme') && 
-				proj.properties.ng_programme !== null &&
+				 
 				//note that this is doing indexOf an array, not a string
-				$scope.projFilter.ngProgrammeFilter.indexOf(proj.properties.ng_programme) > -1)
+				$scope.projFilter.ngProgrammeFilter.indexOf(projNGProgramme) > -1)
 			{
 				filtersPassed++;
 			}
@@ -224,9 +256,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	$scope.addProjectsToMap = function()
 	{
 		$scope.filteredProjSet = $scope.projSet.filter(projFilterFunc);
-
 		var markerClusters = L.markerClusterGroup();
-
 		//TODO: convert to map, to better handle filters
 		for(var i =0; i < $scope.filteredProjSet.length; i++)
 		{
@@ -246,13 +276,11 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 				.addTo($scope.theMap);
 			}
 		}
-
 		//done cycling through features..
 		if($scope.showClusters)
 		{
 			$scope.theMap.addLayer(markerClusters);	
 		}
-
 	}
 
 	$scope.loadProjectData = function()
