@@ -1,0 +1,24 @@
+{
+  "name": "kenyaprojectsmap-gc",
+  "version": "1.0.0",
+  "description": "Resources Used:",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://kinstelli@github.com/kinstelli/kenya_projects_map.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kinstelli/kenya_projects_map/issues"
+  },
+  "homepage": "https://github.com/kinstelli/kenya_projects_map#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "nodemon": "^1.11.0"
+  }
+}

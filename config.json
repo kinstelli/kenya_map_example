@@ -1,0 +1,5 @@
+{
+	"datapath" : "./public/data/",
+	"uncleaned_geojson": "Distribution_of_Donor_and_GOK_Funded_Projects_2013_to_2015.geojson",
+	"cleaned_geojson": "prunedprojdata.geojson"
+}

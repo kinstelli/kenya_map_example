@@ -36,7 +36,7 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		$scope.countyStats = { }; //re init this
 		$scope.clusterButtonText = 'Uncluster Projects';
 		$scope.showClusters = true;
-		$scope.mapColorStat = 'projTotal';
+		$scope.mapColorStat = 'projCount';
 
 		//this object will store unique values from various project properties
 		//	for dynamic picklist options, etc
@@ -73,19 +73,18 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 			curValue = stripNumbersFromNGProgramme(curValue);
 		} 
 
+		//if the property is already being stored...
 		if ($scope.uniquePropValues.hasOwnProperty(projProp))
 		{
-			
-
+			//and already has this value, then ignore it
 			if ($scope.uniquePropValues[projProp].indexOf(curValue) > -1)
 			{
 				return; 
-			}else //no? then add it
-			{
-				
+			}else //otherwise add it
+			{				
 				$scope.uniquePropValues[projProp].push(curValue);
 			}
-		}else{//	property doesn't exist yet. add prop and an array containing the value.
+		}else{//or if property doesn't exist yet, add prop and an array containing the value.
 
 			$scope.uniquePropValues[projProp] = [curValue];
 		}
@@ -94,7 +93,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 	var stripNumbersFromNGProgramme = function(progName)
 	{
 		var returnStr = progName;
-		console.log(progName);
 		if (progName.indexOf('-') > -1)
 		{
 			returnStr = progName.split('-')[1];
@@ -103,7 +101,6 @@ app.controller('appCtrlr', function($scope, $http, $q) {
 		{
 			returnStr = returnStr.split(';')[0];
 		}
-		console.log(returnStr);
 		return returnStr;
 	}
 

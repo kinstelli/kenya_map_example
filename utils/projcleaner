@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+const cleaner = require('./projdata_cleaner.js');
+
+cleaner(process.argv[2], process.argv[3])
