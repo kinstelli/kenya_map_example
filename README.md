@@ -1,37 +1,70 @@
+# Interactive Map of Kenyan Donor and GOK Funded Projects 
 
-Resources Used:
+### Overview
 
-https://sandbox.idre.ucla.edu/sandbox/general/optimize-geojson
+As per the requirements, this project provides a few features:
 
-https://github.com/calvinmetcalf/leaflet-ajax
-	-- but didn't like the apparenttly Promise-less GeoJSON Ajax call, so used util.ajax instead,
-		and handled my own feature add ons
+- Creates a web based map based on the dataset with simple markers for each project. 	Clicking on a marker should show project title, description and objectives.
+	 
+- Allows clustering / unclustering of markers on the map
 
-https://jsfiddle.net/ve2huzxw/307/
+- Displays a chloropleth, based on either total projects per each county, or average total project cost for each county. 
 
-https://github.com/Leaflet/Leaflet.markercluster
+Out of curiosity, I decided to add a few filters, such as a partial text filter, a filter that omits markers without a name or description, and a multi-select box to filter for "NG Programme".
 
-http://leafletjs.com/examples/choropleth/
+- As projects are filtered, the chloropleth and relevant statistics are also recalculated and refreshed.
 
-https://www.mapbox.com/api-documentation/
+### Live version
 
+This project is currently hosted here:
 
-https://loading.io/
+[https://morning-forest-71014.herokuapp.com/]() 
 
-Qs:
-Some descriptions are truncated from source data...anything we can do about this?
+### How to install/run
 
-TODO:
-	* shade areas by average project cost in that county 
-	change built-in PHP server to Node.js standalone server
-	add promises to rendering functions, so it's easier to handle when they're done
-	hide various configs on server side
-	decompose code into proper Angular factories, directives, components etc
-	add mediaqueries for mobile?
-	normalize some data into other json files for faster loading
+To run this project locally, clone the repo, make sure npm is installed, and run the following commands:
 
-WOULD BE NICE:
-	add filtering by type
-	icons for different proj types
-	display legend for cholorpleth at left
+`cd kenya_projects_map`
 
+`npm install`
+
+`gulp`
+
+The application should be visible at [http://localhost:3000]()
+
+Gulp runs two tasks:
+	`cleandata`, which does some trimming of the source JSON files, and
+	`run`, which launches and watches the server
+
+### Approach
+
+I started this with raw HTML, JS, CSS, and some Leaflet libraries, and planned to write it in React, but after trying to use some React / Leaflet modules, I reversed course and built a very straightforward version with Angular 1. 
+
+I'd never used Leaflet or Mapbox, but I saw it in the Ushahidi source code. After writing a handful of small Google Maps projects, I was eager to try out something else.
+
+### Resources Used
+
+ I followed a few suggestions here, per trimming the provided JSON files, though this mostly amounted to removing a few columns from the dataset.
+[https://sandbox.idre.ucla.edu/sandbox/general/optimize-geojson
+]()
+
+I started using this, although I skipped a few of the suggested AJAX functions which didn't return Promises as...well, promised, and used Angular's ajax functions instead.
+[https://github.com/calvinmetcalf/leaflet-ajax
+]()	
+
+This was an extraordinarily helpful library:
+[https://github.com/Leaflet/Leaflet.markercluster]( )
+
+As was this example:
+[http://leafletjs.com/examples/choropleth/]()
+
+Mapbox provided the map tiles, though I barely used its API: 
+[https://www.mapbox.com/api-documentation/]()
+
+And I grabbed a loading gif, presumably license-free, from here.
+[https://loading.io/]() 
+
+### Improvements to be made
+
+Throughout the project, I kept notes of features I wanted to add/modify here, which are still relevant:
+[https://github.com/kinstelli/kenya_projects_map/blob/master/TODOs.md]()

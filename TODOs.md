@@ -1,14 +1,15 @@
-TODO:
-	* fix spinner overlay to be asynch'd against render functions
-	decompose code into proper Angular factories, directives, components etc
-	Add build process via gulp/webpack
-	add promises to rendering functions, so it's easier to handle when they're done
-	hide various configs on server side
-	add mediaqueries for mobile?
-	normalize some data into other JSON files, split from full JSON file
-	Include lodash/underscore, (replace indexOf with contains, etc)
-	Add better alternative to the ugly multi-select box
+##### TODOs:
 
-WOULD BE NICE:
-	icons for different proj types
-	display legend for cholorpleth(s) at left
+- Fix spinner overlay -- not properly async'd prior to render functions
+- Related: add promises to rendering functions, so it's easier to handle when they're done
+- Decompose code into proper Angular factories, directives, components etc
+- Add build process via gulp/webpack
+- Hide various configs on server side
+- Add mediaqueries for mobile/responsive design
+- Normalize some data into other JSON files, split from full JSON file
+- Include lodash/underscore, (replace indexOf with contains, etc)
+- Add alternative to the ugly multi-select box
+
+##### WOULD BE NICE:
+- Create icons for different proj types
+- Display dynamic legend for cholorpleth(s) colors at left
