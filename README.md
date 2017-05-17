@@ -4,11 +4,11 @@
 
 As per the requirements, this project provides a few features:
 
-- Creates a web based map based on the dataset with simple markers for each project. 	Clicking on a marker should show project title, description and objectives.
+- Creates a web based map based on the dataset [provided here](http://www.opendata.go.ke/datasets/distribution-of-donor-and-gok-funded-projects-2013-to-2015) with simple markers for each project. 	Clicking on a marker should show project title, description and objectives.
 	 
 - Allows clustering / unclustering of markers on the map
 
-- Displays a chloropleth, based on either total projects per each county, or average total project cost for each county. 
+- Displays a chloropleth of counties [from boundary dataset provided here](https://github.com/mikelmaron/kenya-election-data/blob/master/data/counties.geojson), based on either total projects per each county , or average total project cost for each county. 
 
 Out of curiosity, I decided to add a few filters, such as a partial text filter, a filter that omits markers without a name or description, and a multi-select box to filter for "NG Programme".
 
