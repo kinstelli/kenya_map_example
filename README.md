@@ -18,7 +18,7 @@ Out of curiosity, I decided to add a few filters, such as a partial text filter,
 
 This project is currently hosted here:
 
-[https://morning-forest-71014.herokuapp.com/]() 
+[https://morning-forest-71014.herokuapp.com/](https://morning-forest-71014.herokuapp.com/) 
 
 ### How to install/run
 
@@ -30,7 +30,7 @@ To run this project locally, clone the repo, make sure npm is installed, and run
 
 `gulp`
 
-The application should be visible at [http://localhost:3000]()
+The application should be visible at [http://localhost:3000](http://localhost:3000)
 
 Gulp runs two tasks:
 	`cleandata`, which does some trimming of the source JSON files, and
@@ -46,25 +46,25 @@ I'd never used Leaflet or Mapbox, but I saw it in the Ushahidi source code. Afte
 
  I followed a few suggestions here, per trimming the provided JSON files, though this mostly amounted to removing a few columns from the dataset.
 [https://sandbox.idre.ucla.edu/sandbox/general/optimize-geojson
-]()
+](https://sandbox.idre.ucla.edu/sandbox/general/optimize-geojson)
 
 I started using this, although I skipped a few of the suggested AJAX functions which didn't return Promises as...well, promised, and used Angular's ajax functions instead.
 [https://github.com/calvinmetcalf/leaflet-ajax
-]()	
+](https://github.com/calvinmetcalf/leaflet-ajax)	
 
 This was an extraordinarily helpful library:
-[https://github.com/Leaflet/Leaflet.markercluster]( )
+[https://github.com/Leaflet/Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster)
 
 As was this example:
-[http://leafletjs.com/examples/choropleth/]()
+[http://leafletjs.com/examples/choropleth/](http://leafletjs.com/examples/choropleth/)
 
 Mapbox provided the map tiles, though I barely used its API: 
-[https://www.mapbox.com/api-documentation/]()
+[https://www.mapbox.com/api-documentation/](https://www.mapbox.com/api-documentation/)
 
 And I grabbed a loading gif, presumably license-free, from here.
-[https://loading.io/]() 
+[https://loading.io/](https://loading.io/) 
 
 ### Improvements to be made
 
 Throughout the project, I kept notes of features I wanted to add/modify here, which are still relevant:
-[https://github.com/kinstelli/kenya_projects_map/blob/master/TODOs.md]()
+[TODOs](https://github.com/kinstelli/Map-Of-Kenya-Projects/blob/master/TODOs.md)
